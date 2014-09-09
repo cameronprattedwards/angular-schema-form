@@ -1,3 +1,9 @@
+(function(root, factory) {
+  if (typeof define == 'function' && define.amd)
+    define(['angular', 'ObjectPath'], factory);
+  else
+    factory(angular);
+}(this, function(angular) {
 angular.module('schemaForm').provider('sfPath',
 ['ObjectPathProvider', function(ObjectPathProvider) {
   var ObjectPath = {parse: ObjectPathProvider.parse};
@@ -24,3 +30,4 @@ angular.module('schemaForm').provider('sfPath',
     return ObjectPath;
   };
 }]);
+}));
