@@ -912,12 +912,11 @@
 
 (function(root, factory) {
   if (typeof define == 'function' && define.amd)
-    define(['angular', 'angular-schema-form/module'], factory);
+    define(['angular', 'tv4', 'angular-schema-form/module'], factory);
   else
-    factory(angular);
-}(this, function(angular) {
+    factory(angular, tv4);
+}(this, function(angular, tv4) {
   /*  Common code for validating a value against its form and schema definition */
-  /* global tv4 */
   angular.module('schemaForm').factory('sfValidator', [function() {
 
     var validator = {};
