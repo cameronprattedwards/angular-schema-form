@@ -1,3 +1,10 @@
+(function(root, factory) {
+  if (typeof define == 'function' && define.amd)
+    define(['angular', 'angular-schema-form/services/validator'], factory);
+  else
+    factory(angular);
+}(this, function(angular) {
+
 angular.module('schemaForm').directive('schemaValidate', ['sfValidator', function(sfValidator) {
   return {
     restrict: 'A',
@@ -77,3 +84,5 @@ angular.module('schemaForm').directive('schemaValidate', ['sfValidator', functio
     }
   };
 }]);
+
+}));
