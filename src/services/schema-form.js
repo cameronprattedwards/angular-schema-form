@@ -7,7 +7,7 @@ angular.module('schemaForm').provider('schemaForm',
 ['sfPathProvider', function(sfPathProvider) {
 
   //Creates an default titleMap list from an enum, i.e. a list of strings.
-  var enumToTitleMap = function(enm) {
+  function enumToTitleMap(enm) {
     var titleMap = []; //canonical titleMap format is a list.
     enm.forEach(function(name) {
       titleMap.push({name: name, value: name});
@@ -17,7 +17,7 @@ angular.module('schemaForm').provider('schemaForm',
 
   // Takes a titleMap in either object or list format and returns one in
   // in the list format.
-  var canonicalTitleMap = function(titleMap, originalEnum) {
+  function canonicalTitleMap(titleMap, originalEnum) {
     if (!angular.isArray(titleMap)) {
       var canonical = [];
       if (originalEnum) {
@@ -34,7 +34,7 @@ angular.module('schemaForm').provider('schemaForm',
     return titleMap;
   };
 
-  var defaultFormDefinition = function(name, schema, options) {
+  function defaultFormDefinition(name, schema, options) {
     var rules = defaults[schema.type];
     if (rules) {
       var def;
@@ -49,7 +49,7 @@ angular.module('schemaForm').provider('schemaForm',
   };
 
   //Creates a form object with all common properties
-  var stdFormObj = function(name, schema, options) {
+  function stdFormObj(name, schema, options) {
     options = options || {};
     var f = options.global && options.global.formDefaults ?
             angular.copy(options.global.formDefaults) : {};
@@ -78,7 +78,7 @@ angular.module('schemaForm').provider('schemaForm',
     return f;
   };
 
-  var text = function(name, schema, options) {
+  function text(name, schema, options) {
     if (schema.type === 'string' && !schema.enum) {
       var f = stdFormObj(name, schema, options);
       f.key  = options.path;
@@ -90,7 +90,7 @@ angular.module('schemaForm').provider('schemaForm',
 
   //default in json form for number and integer is a text field
   //input type="number" would be more suitable don't ya think?
-  var number = function(name, schema, options) {
+  function number(name, schema, options) {
     if (schema.type === 'number') {
       var f = stdFormObj(name, schema, options);
       f.key  = options.path;
@@ -100,7 +100,7 @@ angular.module('schemaForm').provider('schemaForm',
     }
   };
 
-  var integer = function(name, schema, options) {
+  function integer(name, schema, options) {
     if (schema.type === 'integer') {
       var f = stdFormObj(name, schema, options);
       f.key  = options.path;
@@ -110,7 +110,7 @@ angular.module('schemaForm').provider('schemaForm',
     }
   };
 
-  var checkbox = function(name, schema, options) {
+  function checkbox(name, schema, options) {
     if (schema.type === 'boolean') {
       var f = stdFormObj(name, schema, options);
       f.key  = options.path;
@@ -120,7 +120,7 @@ angular.module('schemaForm').provider('schemaForm',
     }
   };
 
-  var select = function(name, schema, options) {
+  function select(name, schema, options) {
     if (schema.type === 'string' && schema.enum) {
       var f = stdFormObj(name, schema, options);
       f.key  = options.path;
@@ -133,7 +133,7 @@ angular.module('schemaForm').provider('schemaForm',
     }
   };
 
-  var checkboxes = function(name, schema, options) {
+  function checkboxes(name, schema, options) {
     if (schema.type === 'array' && schema.items && schema.items.enum) {
       var f = stdFormObj(name, schema, options);
       f.key  = options.path;
@@ -146,7 +146,7 @@ angular.module('schemaForm').provider('schemaForm',
     }
   };
 
-  var fieldset = function(name, schema, options) {
+  function fieldset(name, schema, options) {
 
     if (schema.type === 'object') {
       var f   = stdFormObj(name, schema, options);
@@ -175,10 +175,9 @@ angular.module('schemaForm').provider('schemaForm',
 
       return f;
     }
-
   };
 
-  var array = function(name, schema, options) {
+  function array(name, schema, options) {
 
     if (schema.type === 'array') {
       var f   = stdFormObj(name, schema, options);
@@ -206,7 +205,6 @@ angular.module('schemaForm').provider('schemaForm',
 
       return f;
     }
-
   };
 
   //First sorted by schema type then a list.
@@ -278,158 +276,154 @@ angular.module('schemaForm').provider('schemaForm',
   /* End Provider API */
 
   this.$get = function() {
+    var service = {
+      merge: function(schema, form, ignore, options) {
+        form  = form || ['*'];
+        options = options || {};
 
-    var service = {};
-
-    service.merge = function(schema, form, ignore, options) {
-      form  = form || ['*'];
-      options = options || {};
-
-      var stdForm = service.defaults(schema, ignore, options);
-      //simple case, we have a "*", just put the stdForm there
-      var idx = form.indexOf('*');
-      if (idx !== -1) {
-        form  = form.slice(0, idx)
-                    .concat(stdForm.form)
-                    .concat(form.slice(idx + 1));
-        return form;
-      }
-
-      //ok let's merge!
-      //We look at the supplied form and extend it with schema standards
-      var lookup = stdForm.lookup;
-      return postProcessFn(form.map(function(obj) {
-
-        //handle the shortcut with just a name
-        if (typeof obj === 'string') {
-          obj = {key: obj};
+        var stdForm = service.defaults(schema, ignore, options);
+        //simple case, we have a "*", just put the stdForm there
+        var idx = form.indexOf('*');
+        if (idx !== -1) {
+          form  = form.slice(0, idx)
+                      .concat(stdForm.form)
+                      .concat(form.slice(idx + 1));
+          return form;
         }
 
-        if (obj.key) {
-          if (typeof obj.key === 'string') {
-            obj.key = sfPathProvider.parse(obj.key);
+        //ok let's merge!
+        //We look at the supplied form and extend it with schema standards
+        var lookup = stdForm.lookup;
+        return postProcessFn(form.map(function(obj) {
+
+          //handle the shortcut with just a name
+          if (typeof obj === 'string') {
+            obj = {key: obj};
           }
-        }
 
-        //If it has a titleMap make sure it's a list
-        if (obj.titleMap) {
-          obj.titleMap = canonicalTitleMap(obj.titleMap);
-        }
-
-        //
-        if (obj.itemForm) {
-          obj.items = [];
-          var str = sfPathProvider.stringify(obj.key);
-          var stdForm = lookup[str];
-          angular.forEach(stdForm.items, function(item) {
-            var o = angular.copy(obj.itemForm);
-            o.key = item.key;
-            obj.items.push(o);
-          });
-        }
-
-        //if it's a type with items, merge 'em!
-        if (obj.items) {
-          obj.items = service.merge(schema, obj.items, ignore);
-        }
-
-        //if its has tabs, merge them also!
-        if (obj.tabs) {
-          angular.forEach(obj.tabs, function(tab) {
-            tab.items = service.merge(schema, tab.items, ignore);
-          });
-        }
-
-        //extend with std form from schema.
-        if (obj.key) {
-          var str = sfPathProvider.stringify(obj.key);
-          if (lookup[str]) {
-            obj = angular.extend(lookup[str], obj);
-          }
-        }
-
-        // Special case: checkbox
-        // Since have to ternary state we need a default
-        if (obj.type === 'checkbox' && angular.isUndefined(obj.schema['default'])) {
-          obj.schema['default'] = false;
-        }
-
-        return obj;
-      }));
-    };
-
-    /**
-     * Create form defaults from schema
-     */
-    service.defaults = function(schema, ignore, globalOptions) {
-      var form   = [];
-      var lookup = {}; //Map path => form obj for fast lookup in merging
-      ignore = ignore || {};
-      globalOptions = globalOptions || {};
-
-      if (schema.type === 'object') {
-        angular.forEach(schema.properties, function(v, k) {
-          if (ignore[k] !== true) {
-            var required = schema.required && schema.required.indexOf(k) !== -1;
-            var def = defaultFormDefinition(k, v, {
-              path: [k],         // Path to this property in bracket notation.
-              lookup: lookup,    // Extra map to register with. Optimization for merger.
-              ignore: ignore,    // The ignore list of paths (sans root level name)
-              required: required, // Is it required? (v4 json schema style)
-              global: globalOptions // Global options, including form defaults
-            });
-            if (def) {
-              form.push(def);
+          if (obj.key) {
+            if (typeof obj.key === 'string') {
+              obj.key = sfPathProvider.parse(obj.key);
             }
           }
-        });
 
-      } else {
-        throw new Error('Not implemented. Only type "object" allowed at root level of schema.');
-      }
-      return {form: form, lookup: lookup};
-    };
+          //If it has a titleMap make sure it's a list
+          if (obj.titleMap) {
+            obj.titleMap = canonicalTitleMap(obj.titleMap);
+          }
 
-    //Utility functions
-    /**
-     * Traverse a schema, applying a function(schema,path) on every sub schema
-     * i.e. every property of an object.
-     */
-    service.traverseSchema = function(schema, fn, path, ignoreArrays) {
-      ignoreArrays = angular.isDefined(ignoreArrays) ? ignoreArrays : true;
+          //
+          if (obj.itemForm) {
+            obj.items = [];
+            var str = sfPathProvider.stringify(obj.key);
+            var stdForm = lookup[str];
+            angular.forEach(stdForm.items, function(item) {
+              var o = angular.copy(obj.itemForm);
+              o.key = item.key;
+              obj.items.push(o);
+            });
+          }
 
-      path = path || [];
+          //if it's a type with items, merge 'em!
+          if (obj.items) {
+            obj.items = service.merge(schema, obj.items, ignore);
+          }
 
-      var traverse = function(schema, fn, path) {
-        fn(schema, path);
-        angular.forEach(schema.properties, function(prop, name) {
-          var currentPath = path.slice();
-          currentPath.push(name);
-          traverse(prop, fn, currentPath);
-        });
+          //if its has tabs, merge them also!
+          if (obj.tabs) {
+            angular.forEach(obj.tabs, function(tab) {
+              tab.items = service.merge(schema, tab.items, ignore);
+            });
+          }
 
-        //Only support type "array" which have a schema as "items".
-        if (!ignoreArrays && schema.items) {
-          var arrPath = path.slice(); arrPath.push('');
-          traverse(schema.items, fn, arrPath);
-        }
-      };
+          //extend with std form from schema.
+          if (obj.key) {
+            var str = sfPathProvider.stringify(obj.key);
+            if (lookup[str]) {
+              obj = angular.extend(lookup[str], obj);
+            }
+          }
 
-      traverse(schema, fn, path || []);
-    };
+          // Special case: checkbox
+          // Since have to ternary state we need a default
+          if (obj.type === 'checkbox' && angular.isUndefined(obj.schema['default'])) {
+            obj.schema['default'] = false;
+          }
 
-    service.traverseForm = function(form, fn) {
-      fn(form);
-      angular.forEach(form.items, function(f) {
-        service.traverseForm(f, fn);
-      });
+          return obj;
+        }));
+      },
+      /**
+       * Create form defaults from schema
+       */
+      defaults: function(schema, ignore, globalOptions) {
+        var form   = [];
+        var lookup = {}; //Map path => form obj for fast lookup in merging
+        ignore = ignore || {};
+        globalOptions = globalOptions || {};
 
-      if (form.tabs) {
-        angular.forEach(form.tabs, function(tab) {
-          angular.forEach(tab.items, function(f) {
-            service.traverseForm(f, fn);
+        if (schema.type === 'object') {
+          angular.forEach(schema.properties, function(v, k) {
+            if (ignore[k] !== true) {
+              var required = schema.required && schema.required.indexOf(k) !== -1;
+              var def = defaultFormDefinition(k, v, {
+                path: [k],         // Path to this property in bracket notation.
+                lookup: lookup,    // Extra map to register with. Optimization for merger.
+                ignore: ignore,    // The ignore list of paths (sans root level name)
+                required: required, // Is it required? (v4 json schema style)
+                global: globalOptions // Global options, including form defaults
+              });
+              if (def) {
+                form.push(def);
+              }
+            }
           });
+
+        } else {
+          throw new Error('Not implemented. Only type "object" allowed at root level of schema.');
+        }
+        return {form: form, lookup: lookup};
+      },
+      //Utility functions
+      /**
+       * Traverse a schema, applying a function(schema,path) on every sub schema
+       * i.e. every property of an object.
+       */
+      traverseSchema: function(schema, fn, path, ignoreArrays) {
+        ignoreArrays = angular.isDefined(ignoreArrays) ? ignoreArrays : true;
+
+        path = path || [];
+
+        var traverse = function(schema, fn, path) {
+          fn(schema, path);
+          angular.forEach(schema.properties, function(prop, name) {
+            var currentPath = path.slice();
+            currentPath.push(name);
+            traverse(prop, fn, currentPath);
+          });
+
+          //Only support type "array" which have a schema as "items".
+          if (!ignoreArrays && schema.items) {
+            var arrPath = path.slice(); arrPath.push('');
+            traverse(schema.items, fn, arrPath);
+          }
+        };
+
+        traverse(schema, fn, path || []);
+      },
+      traverseForm: function(form, fn) {
+        fn(form);
+        angular.forEach(form.items, function(f) {
+          service.traverseForm(f, fn);
         });
+
+        if (form.tabs) {
+          angular.forEach(form.tabs, function(tab) {
+            angular.forEach(tab.items, function(f) {
+              service.traverseForm(f, fn);
+            });
+          });
+        }
       }
     };
 
