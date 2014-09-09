@@ -1,3 +1,9 @@
+(function(root, factory) {
+	if (typeof define == 'function' && define.amd)
+		define(['angular'], factory);
+	else
+		factory(angular);
+}(this, function(angular) {
 // Deps is sort of a problem for us, maybe in the future we will ask the user to depend
 // on modules for add-ons
 
@@ -21,6 +27,7 @@ try {
 } catch (e) {}
 
 angular.module('schemaForm', deps);
+}));
 
 angular.module('schemaForm').provider('sfPath',
 ['ObjectPathProvider', function(ObjectPathProvider) {
