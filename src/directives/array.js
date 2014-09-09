@@ -1,3 +1,13 @@
+(function(root, factory){
+  function prefix(name) {
+    return 'angular-schema-form/' + name;
+  }
+  if (typeof define == 'function' && define.amd)
+    define(['angular', prefix('module'), prefix('services/Select'), prefix('services/validator')])
+  else
+    factory(angular);
+}(this, function(angular) {
+
 /**
  * Directive that handles the model arrays
  */
@@ -208,3 +218,5 @@ angular.module('schemaForm').directive('sfArray', ['sfSelect', 'schemaForm', 'sf
     };
   }
 ]);
+
+}));

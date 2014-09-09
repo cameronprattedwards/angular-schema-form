@@ -1,3 +1,10 @@
+(function(root, factory) {
+  if (typeof define == 'function' && define.amd)
+    define(['angular'], factory);
+  else
+    factory(angular);
+}(this, function(angular) {
+
 /**
  * A version of ng-changed that only listens if
  * there is actually a onChange defined on the form
@@ -26,3 +33,5 @@ angular.module('schemaForm').directive('sfChanged', function() {
     }
   };
 });
+
+}));
