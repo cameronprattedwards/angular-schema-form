@@ -4,29 +4,29 @@
 	else
 		factory(angular);
 }(this, function(angular) {
-// Deps is sort of a problem for us, maybe in the future we will ask the user to depend
-// on modules for add-ons
+	// Deps is sort of a problem for us, maybe in the future we will ask the user to depend
+	// on modules for add-ons
 
-var deps = ['ObjectPath'];
-try {
-  //This throws an expection if module does not exist.
-  angular.module('ngSanitize');
-  deps.push('ngSanitize');
-} catch (e) {}
+	var deps = ['ObjectPath'];
+	try {
+	  //This throws an expection if module does not exist.
+	  angular.module('ngSanitize');
+	  deps.push('ngSanitize');
+	} catch (e) {}
 
-try {
-  //This throws an expection if module does not exist.
-  angular.module('ui.sortable');
-  deps.push('ui.sortable');
-} catch (e) {}
+	try {
+	  //This throws an expection if module does not exist.
+	  angular.module('ui.sortable');
+	  deps.push('ui.sortable');
+	} catch (e) {}
 
-try {
-  //This throws an expection if module does not exist.
-  angular.module('angularSpectrumColorpicker');
-  deps.push('angularSpectrumColorpicker');
-} catch (e) {}
+	try {
+	  //This throws an expection if module does not exist.
+	  angular.module('angularSpectrumColorpicker');
+	  deps.push('angularSpectrumColorpicker');
+	} catch (e) {}
 
-angular.module('schemaForm', deps);
+	angular.module('schemaForm', deps);
 }));
 
 angular.module('schemaForm').provider('sfPath',
