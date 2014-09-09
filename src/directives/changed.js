@@ -1,6 +1,6 @@
 (function(root, factory) {
   if (typeof define == 'function' && define.amd)
-    define(['angular'], factory);
+    define(['angular', 'angular-schema-form/module'], factory);
   else
     factory(angular);
 }(this, function(angular) {

@@ -1,3 +1,20 @@
+(function(root, factory) {
+  function prefix(name) {
+    return 'angular-schema-form/' + name;
+  }
+
+  if (typeof define == 'function' && define.amd) {
+    var deps = [
+      'angular',
+      prefix('module'),
+      prefix('services/schema-form'),
+      prefix('services/decorators'),
+      prefix('services/Select')
+    ];
+    define(deps, factory)
+  }
+}(this, function(angular) {
+
 /*
 FIXME: real documentation
 <form sf-form="form"  sf-schema="schema" sf-decorator="foobar"></form>
@@ -111,3 +128,5 @@ angular.module('schemaForm')
     };
   }
 ]);
+
+}));

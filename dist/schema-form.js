@@ -1201,7 +1201,7 @@ angular.module('schemaForm').directive('sfArray', ['sfSelect', 'schemaForm', 'sf
 
 (function(root, factory) {
   if (typeof define == 'function' && define.amd)
-    define(['angular'], factory);
+    define(['angular', 'angular-schema-form/module'], factory);
   else
     factory(angular);
 }(this, function(angular) {
@@ -1236,6 +1236,23 @@ angular.module('schemaForm').directive('sfChanged', function() {
 });
 
 }));
+
+(function(root, factory) {
+  function prefix(name) {
+    return 'angular-schema-form/' + name;
+  }
+
+  if (typeof define == 'function' && define.amd) {
+    var deps = [
+      'angular',
+      prefix('module'),
+      prefix('services/schema-form'),
+      prefix('services/decorators'),
+      prefix('services/Select')
+    ];
+    define(deps, factory)
+  }
+}(this, function(angular) {
 
 /*
 FIXME: real documentation
@@ -1350,6 +1367,8 @@ angular.module('schemaForm')
     };
   }
 ]);
+
+}));
 
 angular.module('schemaForm').directive('schemaValidate', ['sfValidator', function(sfValidator) {
   return {
