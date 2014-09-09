@@ -1,3 +1,10 @@
+(function(root, factory) {
+  if (typeof define == 'function' && define.amd)
+    define(['angular', 'angular-schema-form/module', 'angular-schema-form/services/decorators'], factory);
+  else
+    factory(angular);
+}(this, function(angular) {
+
 angular.module('schemaForm').config(['schemaFormDecoratorsProvider', function(decoratorsProvider) {
   var base = 'directives/decorators/bootstrap/';
 
@@ -59,3 +66,5 @@ angular.module('schemaForm').config(['schemaFormDecoratorsProvider', function(de
     }
   };
 });
+
+}));
