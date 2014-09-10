@@ -11,7 +11,9 @@ describe('schemaFormDecorators', function() {
 
       inject(function($rootScope,$compile,$templateCache){
         var templateWithWrap,
-          template;
+          template,
+          kids,
+          grandkids;
 
         $templateCache.put('/bar.html','<div class="yes">YES</div>');
 
@@ -21,11 +23,15 @@ describe('schemaFormDecorators', function() {
 
         $compile(template)($rootScope);
         $rootScope.$apply();
-        templateWithWrap.children().length.should.equal(1);
-        templateWithWrap.children().is('foobar').should.be.true;
-        templateWithWrap.children().eq(0).children().length.should.equal(1);
-        templateWithWrap.children().eq(0).children().is('div').should.be.true;
-        templateWithWrap.children().eq(0).children().hasClass('yes').should.be.true;
+
+        kids = templateWithWrap.children();
+        kids.length.should.equal(1);
+        kids.is('foobar').should.be.true;
+        
+        grandkids = kids.eq(0).children();
+        grandkids.length.should.equal(1);
+        grandkids.is('div').should.be.true;
+        grandkids.hasClass('yes').should.be.true;
       });
     });
   });
