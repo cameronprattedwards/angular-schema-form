@@ -10,11 +10,14 @@ describe('schemaFormDecorators', function() {
       });
 
       inject(function($rootScope,$compile,$templateCache){
+        var templateWithWrap,
+          template;
+
         $templateCache.put('/bar.html','<div class="yes">YES</div>');
 
         //Since our directive does a replace we need a wrapper to actually check the content.
-        var templateWithWrap = angular.element('<div id="wrap"><foobar form="{ type: \'foo\'}"></foobar></div>');
-        var template         = templateWithWrap.children().eq(0);
+        templateWithWrap = angular.element('<div id="wrap"><foobar form="{ type: \'foo\'}"></foobar></div>');
+        template         = templateWithWrap.children().eq(0);
 
         $compile(template)($rootScope);
         $rootScope.$apply();
